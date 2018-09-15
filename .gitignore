@@ -1,0 +1,8 @@
+gb
+Games/
+src/objs/
+errata/
+testprogs/
+assemble.sh
+out.txt
+*.swp
