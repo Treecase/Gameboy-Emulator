@@ -4,20 +4,20 @@ CC=gcc
 CFLAGS=-O2
 LIBS=-lX11 -lreadline
 
-OBJN=mem cpu Z80 display io low debugger cpu_print cpu_print_arg alarm cpu_timing
+_FILENAMES=mem cpu Z80 display io low debugger cpu_print cpu_print_arg alarm cpu_timing
 
 _HEAD=logging registers
-HEAD=$(addprefix src/, $(addsuffix .h, $(OBJN) $(_HEAD)))
+HEAD=$(addprefix src/, $(addsuffix .h, $(_FILENAMES) $(_HEAD)))
 
-_OBJS=
-OBJS=$(addprefix src/, $(addsuffix .c, $(_OBJS) $(OBJN)))
-_OBJC=$(_OBJS)
-OBJC=$(addprefix src/objs/, $(addsuffix .o, $(_OBJC) $(OBJN)))
+_OBJSRC=
+OBJSRC=$(addprefix src/, $(addsuffix .c, $(_OBJSRC) $(_FILENAMES)))
+_OBJ=$(_OBJSRC)
+OBJ=$(addprefix src/objs/, $(addsuffix .o, $(_OBJ) $(_FILENAMES)))
 
 
 
-gb : src/main.c $(OBJC) Makefile
-	$(CC) src/main.c $(OBJC) -o gb $(CFLAGS) $(LIBS)
+gb : src/main.c $(OBJ) Makefile
+	$(CC) src/main.c $(OBJ) -o gb $(CFLAGS) $(LIBS)
 
 src/cpu_timing.c : cpu_timing_generate.py opcode_timings.txt
 	rm src/cpu_timing.c;\
@@ -26,6 +26,7 @@ src/cpu_timing.c : cpu_timing_generate.py opcode_timings.txt
 src/objs/%.o : src/%.c $(HEAD) Makefile
 	$(CC) $< -c -o $@ $(CFLAGS) $(LIBS)
 
+# debug builds are created with `make debug`
 debug : CFLAGS=-ggdb3 -Wall -Wextra -fsanitize=undefined -fno-sanitize-recover
 debug : |gb
 

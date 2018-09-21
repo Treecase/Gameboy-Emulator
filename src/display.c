@@ -4,6 +4,7 @@
  */
 /* TODO: maybe pull the colour palette out of low.c? */
 /* FIXME: at startup, there are 3 frames drawn with no scanlines, then 1 frame drawn at scanline 138, then 1 frame drawn at scanline 154 */
+/* FIXME: issues with opus5 */
 
 #include "display.h"
 #include "low.h"

@@ -2,7 +2,7 @@
  * Gameboy CPU module
  *
  */
-/* TODO: figure out what's wrong with DAA */
+/* TODO: figure out what's wrong with DAA (it fails blargg's tests) */
 
 #include "cpu.h"
 #include "cpu_print.h"
@@ -31,6 +31,7 @@
 
 
 static bool cpu_halted = false;
+static const char *interrupt_names[] = { "VBLANK", "LCD CONTROLLER", "TIMER OVERFLOW", "SERIAL I/O ENDED", "BUTTON RELEASE" };
 
 
 
@@ -185,7 +186,7 @@ unsigned cpu_cycle(void) {
 void cpu_interrupt (enum interrupt int_type) {
     BYTE IFLAGS = memgval (R_IFLAGS);
     IFLAGS |= int_type;
-    debug ("interrupt %i requested", int_type);
+    debug ("interrupt %i (%s) requested", int_type, interrupt_names[int_type]);
     memsval (R_IFLAGS, IFLAGS);
 }
 
@@ -877,8 +878,6 @@ bool exec_op (BYTE opcode) {
 
 /* cpu_ack_interrupts: acknowledge any interrupts */
 static void cpu_ack_interrupts(void) {
-
-    static const char *interrupt_names[] = { "VBLANK", "LCD CONTROLLER", "TIMER OVERFLOW", "SERIAL I/O ENDED", "BUTTON RELEASE" };
 
     BYTE IFLAGS  = memgval (R_IFLAGS);
     BYTE ISWITCH = memgval (R_ISWITCH);
